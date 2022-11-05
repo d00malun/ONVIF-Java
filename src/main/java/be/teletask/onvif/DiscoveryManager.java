@@ -1,6 +1,7 @@
 package be.teletask.onvif;
 
 import be.teletask.onvif.listeners.DiscoveryListener;
+import be.teletask.onvif.models.DiscoveryType;
 
 
 import java.net.InetAddress;
@@ -37,7 +38,7 @@ public class DiscoveryManager {
      * @param discoveryListener
      */
     public void discover(DiscoveryListener discoveryListener) {
-        discover(DiscoveryMode.ONVIF, discoveryListener);
+        discover(DiscoveryMode.ONVIF, DiscoveryType.DEVICE, discoveryListener);
     }
 
     /**
@@ -53,7 +54,17 @@ public class DiscoveryManager {
      * @param discoveryListener
      */
     public void discover(DiscoveryMode mode, DiscoveryListener discoveryListener) {
-        discovery.probe(mode, discoveryListener);
+        discover(mode, DiscoveryType.DEVICE, discoveryListener);
+    }
+
+    /**
+     * Discovers a list of network devices on the LAN using the specified discovery mode and type.
+     * @param mode
+     * @param type
+     * @param discoveryListener
+     */
+    public void discover(DiscoveryMode mode, DiscoveryType type, DiscoveryListener discoveryListener) {
+        discovery.probe(mode, type, discoveryListener);
     }
 
     /**
