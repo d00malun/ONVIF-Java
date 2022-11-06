@@ -30,5 +30,13 @@ public interface OnvifRequest<T> {
             this.onvifDevice = onvifDevice;
             this.errorCode = errorCode;
         }
+
+        public OnvifDevice getOnvifDevice() {
+            return onvifDevice;
+        }
+
+        public int getErrorCode(){
+            return errorCode;
+        }
     }
 }
