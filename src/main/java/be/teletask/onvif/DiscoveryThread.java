@@ -47,7 +47,7 @@ public class DiscoveryThread extends Thread {
 
                 server.receive(packet);
                 String response = new String(packet.getData(), 0, packet.getLength());
-                parser.setHostName(packet.getAddress().getHostName());
+                parser.setHostName(packet.getAddress().toString());
                 callback.onDevicesFound(parser.parse(new OnvifResponse(response)));
             }
 
