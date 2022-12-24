@@ -14,9 +14,7 @@ import org.xmlpull.v1.XmlPullParserException;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by Tomas Verhelst on 04/09/2018.
@@ -81,7 +79,7 @@ public class DiscoveryParser extends OnvifParser<List<Device>> {
 
                     if (mode.equals(DiscoveryMode.ONVIF) && discoveryType != null) {
                         final OnvifUtils.UriAndScopes uriAndScopes = OnvifUtils.retrieveXAddrsAndScopes(getXpp());
-                        devices.addAll(parseDevicesFromUriAndScopes(uriAndScopes));
+                        devices.add(parseDeviceFromUriAndScopes(uriAndScopes));
                     }
                 }
 
@@ -113,29 +111,35 @@ public class DiscoveryParser extends OnvifParser<List<Device>> {
         this.hostName = hostName;
     }
 
-    private List<OnvifDevice> parseDevicesFromUriAndScopes(OnvifUtils.UriAndScopes uriAndScopes) {
-        List<OnvifDevice> devices = new ArrayList<>();
-        String[] uris = uriAndScopes.getUri().split("\\s+");
+    private OnvifDevice parseDeviceFromUriAndScopes(OnvifUtils.UriAndScopes uriAndScopes) {
+        OnvifDevice device = new OnvifDevice(getHostName());
+        updateDeviceFromScopes(device, uriAndScopes);
+        updateDeviceFromUri(device, uriAndScopes);
+        return device;
+    }
 
-        for (String address : uris) {
-            final URI url = URI.create(address);
-            final String parsedAddress = url.getScheme() + "://" + url.getHost() + (url.getPort() == 0 || url.getPort() == -1 ? "" : ":" + url.getPort());
-
-            OnvifDevice device = new OnvifDevice(parsedAddress);
-            if (uriAndScopes.getScopes() != null) {
-                for (String scope : uriAndScopes.getScopes()) {
-                    final int indexOf = scope.lastIndexOf("/") + 1;
-                    if (scope.contains("onvif://www.onvif.org/hardware/")) device.setHardware(scope.substring(indexOf));
-                    if (scope.contains("onvif://www.onvif.org/location/")) device.setLocation(scope.substring(indexOf));
-                    if (scope.contains("onvif://www.onvif.org/name/")) device.setName(scope.substring(indexOf));
-                }
+    private void updateDeviceFromScopes(OnvifDevice device, OnvifUtils.UriAndScopes uriAndScopes) {
+        if (uriAndScopes.getScopes() != null) {
+            for (String scope : uriAndScopes.getScopes()) {
+                final int indexOf = scope.lastIndexOf("/") + 1;
+                if (scope.contains("onvif://www.onvif.org/hardware/")) device.setHardware(scope.substring(indexOf));
+                if (scope.contains("onvif://www.onvif.org/location/")) device.setLocation(scope.substring(indexOf));
+                if (scope.contains("onvif://www.onvif.org/name/")) device.setName(scope.substring(indexOf));
             }
-
-            device.addAddress(address);
-            devices.add(device);
         }
+    }
 
-        return devices;
+    private void updateDeviceFromUri(OnvifDevice device, OnvifUtils.UriAndScopes uriAndScopes) {
+        String[] uris = uriAndScopes.getUri().split("\\s+");
+        for (String address : uris) {
+            try {
+                final URI url = URI.create(address);
+                final String parsedAddress = url.getScheme() + "://" + url.getHost() + (url.getPort() == 0 || url.getPort() == -1 ? "" : ":" + url.getPort()) + url.getPath();
+                device.addAddress(parsedAddress);
+            } catch (Exception e){
+                System.err.println("Failed to parse address: " + address);
+            }
+        }
     }
 
     private String parseUPnPHeader(String header, String whatSearch) {
