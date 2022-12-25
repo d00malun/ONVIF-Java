@@ -67,22 +67,25 @@ public class OnvifXMLBuilder {
 
     public static String getDiscoverySoapHeader(String uuid) {
         return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                "<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:a=\"http://schemas.xmlsoap.org/ws/2004/08/addressing\">\n" +
+                "<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\"\n " +
+                "xmlns:a=\"http://schemas.xmlsoap.org/ws/2004/08/addressing\"\n" +
+                "xmlns:d=\"http://schemas.xmlsoap.org/ws/2005/04/discovery\"\n" +
+                "xmlns:dn=\"http://www.onvif.org/ver10/network/wsdl\">\n" +
                 "  <soap:Header>\n" +
-                "    <a:Action soap:mustUnderstand=\"1\">http://schemas.xmlsoap.org/ws/2005/04/discovery/Probe</a:Action>\n" +
+                "    <a:Action soap:mustUnderstand=\"true\">http://schemas.xmlsoap.org/ws/2005/04/discovery/Probe</a:Action>\n" +
                 "    <a:MessageID>uuid:" + uuid + "</a:MessageID>\n" +
                 "    <a:ReplyTo>\n" +
                 "      <a:Address>http://schemas.xmlsoap.org/ws/2004/08/addressing/role/anonymous</a:Address>\n" +
                 "    </a:ReplyTo>\n" +
-                "    <a:To soap:mustUnderstand=\"1\">urn:schemas-xmlsoap-org:ws:2005:04:discovery</a:To>\n" +
+                "    <a:To soap:mustUnderstand=\"true\">urn:schemas-xmlsoap-org:ws:2005:04:discovery</a:To>\n" +
                 "  </soap:Header>\n" +
                 "  <soap:Body>\n";
     }
 
     public static String getDiscoverySoapBody(String type) {
-        return "<Probe xmlns=\"http://schemas.xmlsoap.org/ws/2005/04/discovery\">" +
-                "<d:Types xmlns:d=\"http://schemas.xmlsoap.org/ws/2005/04/discovery\" xmlns:dp0=\"http://www.onvif.org/ver10/network/wsdl\">dp0:" + type + "</d:Types>\n" +
-                "</Probe>";
+        return "<d:Probe>\n" +
+                "<d:Types>dn:" + type + "</d:Types>\n" +
+                "</d:Probe>\n";
     }
 
 }
