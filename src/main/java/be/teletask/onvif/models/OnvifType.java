@@ -7,6 +7,7 @@ package be.teletask.onvif.models;
 public enum OnvifType {
     CUSTOM(""),
     GET_SERVICES("http://www.onvif.org/ver10/device/wsdl"),
+    GET_DATE_AND_TIME("http://www.onvif.org/ver10/device/wsdl"),
     GET_DEVICE_INFORMATION("http://www.onvif.org/ver10/device/wsdl"),
     GET_MEDIA_PROFILES("http://www.onvif.org/ver10/media/wsdl"),
     GET_STREAM_URI("http://www.onvif.org/ver10/media/wsdl"),
