@@ -7,6 +7,8 @@ import be.teletask.onvif.responses.OnvifResponse;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.Inet6Address;
+import java.net.InetAddress;
 
 /**
  * Created by Tomas Verhelst on 05/09/2018.
@@ -47,8 +49,13 @@ public class DiscoveryThread extends Thread {
 
                 server.receive(packet);
                 String response = new String(packet.getData(), 0, packet.getLength());
-                parser.setHostName(packet.getAddress().toString());
-                callback.onDevicesFound(parser.parse(new OnvifResponse(response)));
+                InetAddress inetAddress = packet.getAddress();
+                String ip = inetAddress.getHostAddress();
+                if (inetAddress instanceof Inet6Address) {
+                    ip = "[" + ip + "]";
+                }
+                parser.setHostName(ip);
+                callback.onDevicesFound(parser.parse(new OnvifResponse<>(response)));
             }
 
         } catch (IOException ignored) {
