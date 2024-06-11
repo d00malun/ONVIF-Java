@@ -1,13 +1,9 @@
 plugins {
     kotlin("jvm") version "1.3.72"
-    `maven-publish`
-    publishing
-    maven
 }
 
 repositories {
     mavenCentral()
-    jcenter()
 }
 
 group = "be.teletask.onvif"
@@ -28,53 +24,3 @@ val sourcesJar by tasks.creating(Jar::class) {
 }
 
 artifacts.add("archives", sourcesJar)
-
-publishing {
-    repositories {
-        maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/szantogab/ONVIF-Java")
-            credentials {
-                username = project.findProperty("gpr.user") as String? ?: System.getenv("GITHUB_USERNAME")
-                password = project.findProperty("gpr.key") as String? ?: System.getenv("GITHUB_TOKEN")
-            }
-        }
-    }
-    publications {
-        register("gprRelease", MavenPublication::class) {
-            groupId = "com.github.szantogab"
-            artifactId = "onvif-java"
-            version = project.version as String
-
-            from(components["java"])
-
-            artifact(sourcesJar)
-
-            pom {
-                packaging = "jar"
-                name.set("ONVIF-Java")
-                description.set("ONVIF support for Java and Kotlin")
-                url.set("https://github.com/szantogab/ONVIF-Java")
-                /*scm {
-                    url.set(myGithubHttpUrl)
-                }
-                issueManagement {
-                    url.set(myGithubIssueTrackerUrl)
-                }*/
-/*                licenses {
-                    license {
-                        name.set(myLicense)
-                        url.set(myLicenseUrl)
-                    }
-                }*/
-                developers {
-                    developer {
-                        id.set("szantogab")
-                        name.set("Gabor Szanto")
-                    }
-                }
-            }
-
-        }
-    }
-}
