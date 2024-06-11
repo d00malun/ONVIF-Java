@@ -3,10 +3,7 @@ package be.teletask.onvif;
 import be.teletask.onvif.listeners.OnvifResponseListener;
 import be.teletask.onvif.models.OnvifDevice;
 import be.teletask.onvif.models.OnvifServices;
-import be.teletask.onvif.parsers.GetDeviceInformationParser;
-import be.teletask.onvif.parsers.GetMediaProfilesParser;
-import be.teletask.onvif.parsers.GetMediaStreamParser;
-import be.teletask.onvif.parsers.GetServicesParser;
+import be.teletask.onvif.parsers.*;
 import be.teletask.onvif.requests.OnvifRequest;
 import be.teletask.onvif.responses.OnvifResponse;
 import com.burgstaller.okhttp.AuthenticationCacheInterceptor;
@@ -131,6 +128,9 @@ public class OnvifExecutor {
                 OnvifServices path = new GetServicesParser().parse(response);
                 device.setPath(path);
                 data = path;
+                break;
+            case GET_DATE_AND_TIME:
+                data = new GetDateAndTimeParser().parse(response);
                 break;
             case GET_DEVICE_INFORMATION:
                 data = new GetDeviceInformationParser().parse(response);

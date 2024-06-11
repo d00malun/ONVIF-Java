@@ -4,6 +4,7 @@ import be.teletask.onvif.listeners.DiscoveryCallback;
 import be.teletask.onvif.listeners.DiscoveryListener;
 import be.teletask.onvif.models.Device;
 import be.teletask.onvif.models.DiscoveryPacket;
+import be.teletask.onvif.models.DiscoveryType;
 import be.teletask.onvif.models.OnvifPacket;
 
 
@@ -45,6 +46,7 @@ public class OnvifDiscovery {
     //Attributes
     private int discoveryTimeout = DISCOVERY_TIMEOUT;
     private DiscoveryMode mode;
+    private DiscoveryType type;
     private DiscoveryListener discoveryListener;
 
     //Constructors
@@ -89,9 +91,10 @@ public class OnvifDiscovery {
      * Discoveries are sent over multicast, replies are sent over unicast (both in UDP)
      * It means that the device will receive the discovery query, but it will not be able to answer back to the discovery tool if the peers are working on different subnets.
      */
-    void probe(DiscoveryMode mode, DiscoveryListener discoveryListener) {
+    void probe(DiscoveryMode mode, DiscoveryType type, DiscoveryListener discoveryListener) {
         //Sets the mode and discovery callback
         this.mode = mode;
+        this.type = type;
         this.discoveryListener = discoveryListener;
 
         //Get all interface addresses to send the UDP package on.
@@ -192,7 +195,7 @@ public class OnvifDiscovery {
 
     private OnvifPacket createDiscoveryPacket() {
         String uuid = UUID.randomUUID().toString();
-        return new DiscoveryPacket(uuid, mode);
+        return new DiscoveryPacket(uuid, mode, type);
     }
 
     List<InetAddress> getInterfaceAddresses() {

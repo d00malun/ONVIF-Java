@@ -3,9 +3,6 @@ package be.teletask.onvif.models;
 import be.teletask.onvif.DiscoveryMode;
 import be.teletask.onvif.OnvifXMLBuilder;
 
-
-import java.util.Locale;
-
 /**
  * Created by Tomas Verhelst on 05/09/2018.
  * Copyright (c) 2018 TELETASK BVBA. All rights reserved.
@@ -27,15 +24,17 @@ public class DiscoveryPacket extends OnvifPacket {
     //Attributes
     private final String uuid;
     private final DiscoveryMode mode;
+    private final DiscoveryType discoveryType;
 
     //Constructors
     public DiscoveryPacket(String uuid) {
-        this(uuid, DiscoveryMode.ONVIF);
+        this(uuid, DiscoveryMode.ONVIF, DiscoveryType.DEVICE);
     }
 
-    public DiscoveryPacket(String uuid, DiscoveryMode mode) {
+    public DiscoveryPacket(String uuid, DiscoveryMode mode, DiscoveryType type) {
         this.uuid = uuid;
         this.mode = mode;
+        this.discoveryType = type;
     }
 
     //Properties
@@ -46,7 +45,7 @@ public class DiscoveryPacket extends OnvifPacket {
             StringBuilder builder = new StringBuilder();
             String header = OnvifXMLBuilder.getDiscoverySoapHeader(uuid);
             builder.append(header);
-            builder.append(OnvifXMLBuilder.getDiscoverySoapBody("Device"));
+            builder.append(OnvifXMLBuilder.getDiscoverySoapBody(discoveryType.type));
             builder.append(OnvifXMLBuilder.getEnvelopeEnd());
             data = builder.toString();
         } else if (mode.equals(DiscoveryMode.UPNP)) {

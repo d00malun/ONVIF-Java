@@ -2,15 +2,11 @@ package be.teletask.onvif;
 
 
 import com.burgstaller.okhttp.digest.Credentials;
-import com.burgstaller.okhttp.digest.DigestAuthenticator;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.Instant;
 import java.util.Base64;
 import java.util.Random;
 
@@ -22,20 +18,24 @@ public class OnvifXMLBuilder {
     //Constants
     public static final String TAG = OnvifXMLBuilder.class.getSimpleName();
 
+    private static boolean isUserOrPassPresent(Credentials cred){
+        return (!"".equals(cred.getUserName()) || (!"".equals(cred.getPassword())));
+    }
+
     //Attributes
     public static String getSoapHeader(Credentials cred) {
         String nonce = null;
         String created = null;
         String digest = null;
 
-        if (cred != null) {
+        if (cred != null && isUserOrPassPresent(cred)) {
             try {
                 MessageDigest md = MessageDigest.getInstance("SHA1");
 
                 byte[] bytes = new byte[20];
                 new Random().nextBytes(bytes);
                 nonce = Base64.getEncoder().encodeToString(bytes);
-                created = ZonedDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+                created = Instant.now().toString(); // Timestamp in UTC formatted like: 2022-11-05T12:18:19.600710800Z
 
                 byte[] createdByteArray = created.getBytes(StandardCharsets.UTF_8);
                 byte[] passwordByteArray = cred.getPassword().getBytes(StandardCharsets.UTF_8);
@@ -57,7 +57,7 @@ public class OnvifXMLBuilder {
                 "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" " +
                 "xmlns:wsse=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd\" soap:mustUnderstand=\"true\" " +
                 "xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\" >" +
-                (digest == null ? "" : "<soap:Header><Security soap:mustUnderstand=\"1\" xmlns=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd\"><UsernameToken><Username>" + cred.getUserName() + "</Username><Password Type=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordDigest\">" + digest + "</Password>" +
+                (digest == null ? "" : "<soap:Header><Security soap:mustUnderstand=\"true\" xmlns=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd\"><UsernameToken><Username>" + cred.getUserName() + "</Username><Password Type=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordDigest\">" + digest + "</Password>" +
                         "<Nonce EncodingType=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary\">" + nonce + "</Nonce>" +
                         "<Created xmlns=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd\">" + created + "</Created>" +
                         "</UsernameToken></Security></soap:Header>") +
@@ -71,22 +71,25 @@ public class OnvifXMLBuilder {
 
     public static String getDiscoverySoapHeader(String uuid) {
         return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                "<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:a=\"http://schemas.xmlsoap.org/ws/2004/08/addressing\">\n" +
+                "<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\"\n " +
+                "xmlns:a=\"http://schemas.xmlsoap.org/ws/2004/08/addressing\"\n" +
+                "xmlns:d=\"http://schemas.xmlsoap.org/ws/2005/04/discovery\"\n" +
+                "xmlns:dn=\"http://www.onvif.org/ver10/network/wsdl\">\n" +
                 "  <soap:Header>\n" +
-                "    <a:Action soap:mustUnderstand=\"1\">http://schemas.xmlsoap.org/ws/2005/04/discovery/Probe</a:Action>\n" +
+                "    <a:Action soap:mustUnderstand=\"true\">http://schemas.xmlsoap.org/ws/2005/04/discovery/Probe</a:Action>\n" +
                 "    <a:MessageID>uuid:" + uuid + "</a:MessageID>\n" +
                 "    <a:ReplyTo>\n" +
                 "      <a:Address>http://schemas.xmlsoap.org/ws/2004/08/addressing/role/anonymous</a:Address>\n" +
                 "    </a:ReplyTo>\n" +
-                "    <a:To soap:mustUnderstand=\"1\">urn:schemas-xmlsoap-org:ws:2005:04:discovery</a:To>\n" +
+                "    <a:To soap:mustUnderstand=\"true\">urn:schemas-xmlsoap-org:ws:2005:04:discovery</a:To>\n" +
                 "  </soap:Header>\n" +
                 "  <soap:Body>\n";
     }
 
     public static String getDiscoverySoapBody(String type) {
-        return "<Probe xmlns=\"http://schemas.xmlsoap.org/ws/2005/04/discovery\">" +
-                "<d:Types xmlns:d=\"http://schemas.xmlsoap.org/ws/2005/04/discovery\" xmlns:dp0=\"http://www.onvif.org/ver10/network/wsdl\">dp0:" + type + "</d:Types>\n" +
-                "</Probe>";
+        return "<d:Probe>\n" +
+                "<d:Types>dn:" + type + "</d:Types>\n" +
+                "</d:Probe>\n";
     }
 
 }
