@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "1.3.72"
+    kotlin("jvm") version "2.0.0"
 }
 
 repositories {
@@ -15,11 +15,11 @@ dependencies {
     implementation("net.sf.kxml", "kxml2", "2.3.0")
     implementation("com.squareup.okhttp3", "okhttp", "4.9.3")
     implementation("io.github.rburgst", "okhttp-digest", "2.7")
-    implementation("org.jetbrains.kotlinx", "kotlinx-coroutines-core", "1.3.4")
+    implementation("org.jetbrains.kotlinx", "kotlinx-coroutines-core", "1.8.1")
 }
 
 val sourcesJar by tasks.creating(Jar::class) {
-    classifier = "sources"
+    archiveClassifier.set("sources")
     from(sourceSets["main"].allSource)
 }
 
