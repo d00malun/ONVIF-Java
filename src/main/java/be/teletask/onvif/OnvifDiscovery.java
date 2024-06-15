@@ -129,7 +129,7 @@ public class OnvifDiscovery {
                     client.setBroadcast(true);
 
                     //Start a new thread to listen for incoming UDP packages
-                    new DiscoveryThread(client, discoveryTimeout, mode, new DiscoveryCallback() {
+                    new DiscoveryThread(client, discoveryTimeout, mode, type, new DiscoveryCallback() {
 
                         @Override
                         public void onDiscoveryStarted() {

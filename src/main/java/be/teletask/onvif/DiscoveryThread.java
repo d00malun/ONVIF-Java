@@ -1,6 +1,7 @@
 package be.teletask.onvif;
 
 import be.teletask.onvif.listeners.DiscoveryCallback;
+import be.teletask.onvif.models.DiscoveryType;
 import be.teletask.onvif.parsers.DiscoveryParser;
 import be.teletask.onvif.responses.OnvifResponse;
 
@@ -26,12 +27,12 @@ public class DiscoveryThread extends Thread {
     private DiscoveryCallback callback;
 
     //Constructors
-    DiscoveryThread(DatagramSocket server, int timeout, DiscoveryMode mode, DiscoveryCallback callback) {
+    DiscoveryThread(DatagramSocket server, int timeout, DiscoveryMode mode, DiscoveryType type, DiscoveryCallback callback) {
         super();
         this.server = server;
         this.timeout = timeout;
         this.callback = callback;
-        parser = new DiscoveryParser(mode);
+        parser = new DiscoveryParser(mode, type);
     }
 
     @Override
