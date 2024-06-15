@@ -66,12 +66,14 @@ public class DiscoveryParser extends OnvifParser<List<Device>> {
             "</SOAP-ENV:Envelope>";
 
     //Attributes
-    private DiscoveryMode mode;
+    private final DiscoveryMode discoveryMode;
+    private final DiscoveryType discoveryType;
     private String hostName;
 
     //Constructors
-    public DiscoveryParser(DiscoveryMode mode) {
-        this.mode = mode;
+    public DiscoveryParser(DiscoveryMode discoveryMode, DiscoveryType discoveryType) {
+        this.discoveryMode = discoveryMode;
+        this.discoveryType = discoveryType;
         hostName = "";
 
         // warmup the parser
@@ -84,7 +86,7 @@ public class DiscoveryParser extends OnvifParser<List<Device>> {
     public List<Device> parse(OnvifResponse response) {
         List<Device> devices = new ArrayList<>();
 
-        switch (mode) {
+        switch (discoveryMode) {
             case ONVIF:
                 devices.addAll(parseOnvif(response));
                 break;
@@ -105,17 +107,8 @@ public class DiscoveryParser extends OnvifParser<List<Device>> {
 
                 if (eventType == XmlPullParser.START_TAG && getXpp().getName().equals("Types")) {
                     getXpp().next();
-                    String type = getXpp().getText();
-
-                    DiscoveryType discoveryType = null;
-                    for (DiscoveryType t : DiscoveryType.values()) {
-                        if (type.toLowerCase().contains(t.type.toLowerCase())) {
-                            discoveryType = t;
-                            break;
-                        }
-                    }
-
-                    if (mode.equals(DiscoveryMode.ONVIF) && discoveryType != null) {
+                    String typeString = getXpp().getText();
+                    if (typeString.toLowerCase().contains(discoveryType.type.toLowerCase())) {
                         final OnvifUtils.UriAndScopes uriAndScopes = OnvifUtils.retrieveXAddrsAndScopes(getXpp());
                         devices.add(parseDeviceFromUriAndScopes(uriAndScopes));
                     }
