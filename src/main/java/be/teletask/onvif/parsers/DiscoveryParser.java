@@ -163,6 +163,9 @@ public class DiscoveryParser extends OnvifParser<List<Device>> {
     private void updateDeviceFromUri(OnvifDevice device, OnvifUtils.UriAndScopes uriAndScopes) {
         String[] uris = uriAndScopes.getUri().split("\\s+");
         for (String address : uris) {
+            if (address.startsWith("http://[]") || address.startsWith("https://[]")) {
+                continue;
+            }
             try {
                 final URI url = URI.create(address);
                 final String parsedAddress = url.getScheme() + "://" + url.getHost() + (url.getPort() == 0 || url.getPort() == -1 ? "" : ":" + url.getPort()) + url.getPath();
