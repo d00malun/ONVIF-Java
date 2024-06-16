@@ -11,7 +11,7 @@ repositories {
 }
 
 group = "be.teletask.onvif"
-version = "1.1.15"
+version = "1.1.16"
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
