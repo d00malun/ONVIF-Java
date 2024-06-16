@@ -1,7 +1,6 @@
 # ONVIF-Java
 
-[![](https://jitpack.io/v/lamba92/ONVIF-Java.svg)](https://jitpack.io/#lamba92/ONVIF-Java)
-[![Build Status](https://travis-ci.org/lamba92/ONVIF-Java.svg?branch=master)](https://travis-ci.org/lamba92/ONVIF-Java)
+[![](https://jitpack.io/v/d00malun/ONVIF-Java.svg)](https://jitpack.io/#d00malun/ONVIF-Java)
 
 
 <p align="center"> 
@@ -21,7 +20,7 @@ ONVIF is an open industry forum that provides and promotes standardized interfac
   - [**Kotlin Coroutines support**](KOTLIN.md)
 
 ## Discovery
----
+
 The OnvifDiscovery class uses the **Web Services Dynamic Discovery (WS-Discovery)**. This is a technical specification that defines a multicast discovery protocol to locate services on a local network. It operates over TCP and UDP port ```3702``` and uses IP multicast address ```239.255.255.250```. As the name suggests, the actual communication between nodes is done using web services standards, notably **SOAP-over-UDP**.
 
 With WS-Discovery, the discovery tool puts SSDP queries on the network from its unicast address to ```239.255.255.250``` multicast address, sending them to the well-known UDP port 3702. The device receives the query, and answers to the discovery tool's unicast IP address from its unicast IP address. The reply contains information about the Web Services (WS) available on the device.
@@ -47,7 +46,6 @@ manager.discover(new DiscoveryListener() {
 ```
 
 ## ONVIF
----
 
 With the ```OnvifManager``` class it is possible to send requests to an ONVIF-supported device. All requests are sent asynchronously and you can use the ```OnvifResponseListener``` for errors and custom response handling. It is possible to create your own ```OnvifDevice``` or retrieve a list from the ```discover``` method in the ```DiscoveryManager```
 
@@ -122,7 +120,6 @@ onvifManager.getMediaSnapshotURI(device, mediaProfiles.get(0), new OnvifMediaStr
 ```
 
 ## UPnP
----
 
 With the ```UPnPManager``` it is possible to retrieve device information from a locally connected UPnP device. A ```UPnPDevice``` can be created manually or discovered from the ```DiscoveryManager``` using ```discovery.discover(DiscoveryMode.UPNP)```
 
@@ -144,7 +141,6 @@ uPnPManager.getDeviceInformation(device, new UPnPDeviceInformationListener() {
 ```
 
 ## Custom requests
----
 
 It is possible to implement your custom ONVIF request by creating a new class and implementing the ```OnvifRequest``` interface and overriding the ```getXml()``` and ```getType()``` methods.
 
@@ -172,7 +168,7 @@ onvifManager.sendOnvifRequest(device, new PTZRequest());
 Use the ```OnvifResponseListener``` to receive responses from your custom requests.
 
 ## Android
----
+
 In order to receive multicasts packets on your Android device, you'll have to acquire a lock on your WifiManager before making a discovery. Make sure to release the lock once the discovery is completed. More information can be found here: https://developer.android.com/reference/android/net/wifi/WifiManager.MulticastLock
 
 ```java
@@ -186,7 +182,7 @@ private void lockMulticast() {
 }
 ```
 
-## Download [![](https://jitpack.io/v/lamba92/ONVIF-Java.svg)](https://jitpack.io/#lamba92/ONVIF-Java)
+## Download [![](https://jitpack.io/v/d00malun/ONVIF-Java.svg)](https://jitpack.io/#d00malun/ONVIF-Java)
 
 
 ```xml
@@ -198,16 +194,16 @@ private void lockMulticast() {
 </repositories>
 ...
 <dependency>
-    <groupId>com.github.lamba92</groupId>
+    <groupId>com.github.d00malun</groupId>
     <artifactId>ONVIF-Java</artifactId>
-    <version>Tag</version>
+    <version>{LATEST_TAG}</version>
 </dependency>
 
 ```
 or Gradle:
 ```groovy
 dependencies {
-    implementation 'com.github.lamba92:ONVIF-Java:{LATEST_TAG}'
+    implementation 'com.github.d00malun:ONVIF-Java:{LATEST_TAG}'
 }
 ```
 
@@ -217,11 +213,10 @@ dependencies {
  - Implementation PTZ
 
 ## Pull Requests
----
+
 Feel free to send pull requests. 
 
-License
-=======
+## License
 
     Copyright 2018 TELETASK BVBA.
 
