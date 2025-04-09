@@ -153,9 +153,9 @@ public class DiscoveryParser extends OnvifParser<List<Device>> {
         if (uriAndScopes.getScopes() != null) {
             for (String scope : uriAndScopes.getScopes()) {
                 final int indexOf = scope.lastIndexOf("/") + 1;
-                if (scope.contains("onvif://www.onvif.org/hardware/")) device.setHardware(scope.substring(indexOf));
+                if (scope.contains("onvif://www.onvif.org/hardware/")) device.setHardware(scope.replace("onvif://www.onvif.org/hardware/", ""));
                 if (scope.contains("onvif://www.onvif.org/location/")) device.setLocation(scope.substring(indexOf));
-                if (scope.contains("onvif://www.onvif.org/name/")) device.setName(scope.substring(indexOf));
+                if (scope.contains("onvif://www.onvif.org/name/")) device.setName(scope.replace("onvif://www.onvif.org/name/", ""));
             }
         }
     }
