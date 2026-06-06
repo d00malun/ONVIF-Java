@@ -41,6 +41,7 @@ public class GetServicesParser extends OnvifParser<OnvifServices> {
                     } else if (currentNamespace.equals(OnvifType.PTZ_CONTINUOUS_MOVE.namespace)) {
                         String uri = OnvifUtils.retrieveXAddr(getXpp());
                         path.setPtzPath(OnvifUtils.getPathFromURL(uri));
+                        path.setPtzSupported(true);
                     }
                 }
 

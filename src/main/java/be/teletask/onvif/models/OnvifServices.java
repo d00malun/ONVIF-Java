@@ -21,6 +21,8 @@ public class OnvifServices {
     private String streamURIPath = ONVIF_PATH_STREAM_URI;
     private String ptzPath = ONVIF_PATH_PTZ;
 
+    private boolean ptzSupported = false;
+
     //Constructors
     public OnvifServices() {
     }
@@ -65,6 +67,14 @@ public class OnvifServices {
 
     public void setPtzPath(String ptzPath) {
         this.ptzPath = ptzPath;
+    }
+
+    public boolean isPtzSupported() {
+        return ptzSupported;
+    }
+
+    public void setPtzSupported(boolean ptzSupported) {
+        this.ptzSupported = ptzSupported;
     }
 
 }
