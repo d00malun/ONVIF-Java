@@ -11,7 +11,7 @@ repositories {
 }
 
 group = "be.teletask.onvif"
-version = "1.1.17"
+version = "1.1.18-SNAPSHOT"
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
@@ -41,8 +41,8 @@ publishing {
     }
     publications {
         register("gprRelease", MavenPublication::class) {
-            groupId = "com.github.szantogab"
-            artifactId = "onvif-java"
+            groupId = "com.github.d00malun"
+            artifactId = "ONVIF-Java"
             version = project.version as String
 
             from(components["java"])

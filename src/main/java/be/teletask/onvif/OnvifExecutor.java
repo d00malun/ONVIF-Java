@@ -172,6 +172,11 @@ public class OnvifExecutor {
                 return device.getPath().getProfilesPath();
             case GET_STREAM_URI:
                 return device.getPath().getStreamURIPath();
+            case PTZ_CONTINUOUS_MOVE:
+            case PTZ_RELATIVE_MOVE:
+            case PTZ_ABSOLUTE_MOVE:
+            case PTZ_STOP:
+                return device.getPath().getPtzPath();
         }
 
         return device.getPath().getServicesPath();

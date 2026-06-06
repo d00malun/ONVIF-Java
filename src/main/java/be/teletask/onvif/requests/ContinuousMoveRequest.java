@@ -45,6 +45,6 @@ public class ContinuousMoveRequest implements OnvifRequest<Void> {
 
     @Override
     public OnvifType getType() {
-        return OnvifType.CONTINUOUS_MOVE;
+        return OnvifType.PTZ_CONTINUOUS_MOVE;
     }
 }

@@ -44,6 +44,6 @@ public class AbsoluteMoveRequest implements OnvifRequest<Void> {
 
     @Override
     public OnvifType getType() {
-        return OnvifType.ABSOLUTE_MOVE;
+        return OnvifType.PTZ_ABSOLUTE_MOVE;
     }
 }

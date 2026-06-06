@@ -12,10 +12,10 @@ public enum OnvifType {
     GET_MEDIA_PROFILES("http://www.onvif.org/ver10/media/wsdl"),
     GET_STREAM_URI("http://www.onvif.org/ver10/media/wsdl"),
     GET_SNAPSHOT_URI("http://www.onvif.org/ver10/media/wsdl"),
-    CONTINUOUS_MOVE("http://www.onvif.org/ver10/media/wsdl"),
-    ABSOLUTE_MOVE("http://www.onvif.org/ver10/media/wsdl"),
-    PTZ_STOP("http://www.onvif.org/ver10/media/wsdl"),
-    RELATIVE_MOVE("http://www.onvif.org/ver10/media/wsdl");
+    PTZ_CONTINUOUS_MOVE("http://www.onvif.org/ver20/ptz/wsdl"),
+    PTZ_ABSOLUTE_MOVE("http://www.onvif.org/ver20/ptz/wsdl"),
+    PTZ_STOP("http://www.onvif.org/ver20/ptz/wsdl"),
+    PTZ_RELATIVE_MOVE("http://www.onvif.org/ver20/ptz/wsdl");
 
     public final String namespace;
 
