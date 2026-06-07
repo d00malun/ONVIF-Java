@@ -214,34 +214,54 @@ public class OnvifExecutor {
     }
 
     private String extractSoapFaultReason(String xml) {
+        //System.out.println("Extracting SOAP Fault reason from XML: " + xml);
         if (xml == null) {
             return "Unknown SOAP Fault";
         }
-        int start = xml.indexOf("<faultstring>");
-        if (start != -1) {
-            int end = xml.indexOf("</faultstring>", start);
-            if (end != -1) {
-                return xml.substring(start + 13, end);
-            }
+
+        // Try to find <Text> (SOAP 1.2)
+        String text = extractTagContent(xml, "Text");
+        if (text != null && !text.trim().isEmpty()) {
+            return text.trim();
         }
-        start = xml.indexOf("<soap:Text");
-        if (start != -1) {
-            int tagEnd = xml.indexOf(">", start);
-            if (tagEnd != -1) {
-                int end = xml.indexOf("</soap:Text>", tagEnd);
-                if (end != -1) {
-                    return xml.substring(tagEnd + 1, end);
-                }
-            }
+
+        // Try to find <faultstring> (SOAP 1.1)
+        String faultString = extractTagContent(xml, "faultstring");
+        if (faultString != null && !faultString.trim().isEmpty()) {
+            return faultString.trim();
         }
-        start = xml.indexOf("<Reason>");
-        if (start != -1) {
-            int end = xml.indexOf("</Reason>", start);
-            if (end != -1) {
-                return xml.substring(start + 8, end);
-            }
+
+        // Try to find <Reason> as fallback
+        String reason = extractTagContent(xml, "Reason");
+        if (reason != null && !reason.trim().isEmpty()) {
+            // Strip any nested XML tags if present
+            return reason.replaceAll("<[^>]*>", "").trim();
         }
+
+        // Try to find <message> as fallback
+        String message = extractTagContent(xml, "message");
+        if (message != null && !message.trim().isEmpty()) {
+            return message.trim();
+        }
+
+        System.out.println("Could not extract SOAP Fault reason from XML: " + xml);
         return "SOAP Fault: check device logs or raw response";
+    }
+
+    private String extractTagContent(String xml, String tagName) {
+        try {
+            java.util.regex.Pattern pattern = java.util.regex.Pattern.compile(
+                    "<[\\w:\\-]*" + tagName + "[^>]*>(.*?)</[\\w:\\-]*" + tagName + ">",
+                    java.util.regex.Pattern.CASE_INSENSITIVE | java.util.regex.Pattern.DOTALL
+            );
+            java.util.regex.Matcher matcher = pattern.matcher(xml);
+            if (matcher.find()) {
+                return matcher.group(1);
+            }
+        } catch (Exception e) {
+            // Ignore regex exceptions
+        }
+        return null;
     }
 
 }
