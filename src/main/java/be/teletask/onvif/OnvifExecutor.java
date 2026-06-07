@@ -207,6 +207,8 @@ public class OnvifExecutor {
             case PTZ_SET_PRESET:
             case PTZ_GOTO_PRESET:
             case PTZ_REMOVE_PRESET:
+            case PTZ_GOTO_HOME_POSITION:
+            case PTZ_SET_HOME_POSITION:
                 return device.getPath().getPtzPath();
         }
 

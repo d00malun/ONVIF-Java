@@ -101,6 +101,16 @@ public class OnvifManager implements OnvifResponseListener {
         executor.sendRequest(device, request);
     }
 
+    public void gotoPTZHomePosition(OnvifDevice device, String profileToken, OnvifRequest.Listener<Void> listener) {
+        final GotoHomePositionRequest request = new GotoHomePositionRequest(profileToken, listener);
+        executor.sendRequest(device, request);
+    }
+
+    public void setPTZHomePosition(OnvifDevice device, String profileToken, OnvifRequest.Listener<Void> listener) {
+        final SetHomePositionRequest request = new SetHomePositionRequest(profileToken, listener);
+        executor.sendRequest(device, request);
+    }
+
     public void sendOnvifRequest(OnvifDevice device, OnvifRequest<?> request) {
         executor.sendRequest(device, request);
     }
