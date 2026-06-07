@@ -8,6 +8,8 @@ import be.teletask.onvif.requests.OnvifRequest;
 import be.teletask.onvif.responses.OnvifResponse;
 import com.burgstaller.okhttp.AuthenticationCacheInterceptor;
 import com.burgstaller.okhttp.CachingAuthenticatorDecorator;
+import com.burgstaller.okhttp.DispatchingAuthenticator;
+import com.burgstaller.okhttp.basic.BasicAuthenticator;
 import com.burgstaller.okhttp.digest.CachingAuthenticator;
 import com.burgstaller.okhttp.digest.Credentials;
 import com.burgstaller.okhttp.digest.DigestAuthenticator;
@@ -40,7 +42,14 @@ public class OnvifExecutor {
     OnvifExecutor(OnvifResponseListener onvifResponseListener) {
         this.onvifResponseListener = onvifResponseListener;
 
-        DigestAuthenticator authenticator = new DigestAuthenticator(credentials);
+        DigestAuthenticator digestAuthenticator = new DigestAuthenticator(credentials);
+        BasicAuthenticator basicAuthenticator = new BasicAuthenticator(credentials);
+
+        DispatchingAuthenticator authenticator = new DispatchingAuthenticator.Builder()
+                .with("digest", digestAuthenticator)
+                .with("basic", basicAuthenticator)
+                .build();
+
         Map<String, CachingAuthenticator> authCache = new ConcurrentHashMap<>();
 
         client = new OkHttpClient.Builder()
