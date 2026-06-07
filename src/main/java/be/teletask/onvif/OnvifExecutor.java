@@ -12,7 +12,6 @@ import com.burgstaller.okhttp.digest.CachingAuthenticator;
 import com.burgstaller.okhttp.digest.Credentials;
 import com.burgstaller.okhttp.digest.DigestAuthenticator;
 import okhttp3.*;
-import okio.Buffer;
 
 import java.io.IOException;
 import java.util.Map;
@@ -91,34 +90,56 @@ public class OnvifExecutor {
 
                     @Override
                     public void onResponse(Call call, Response xmlResponse) throws IOException {
-                        OnvifResponse<Object> response = new OnvifResponse(request);
-                        ResponseBody xmlBody = xmlResponse.body();
-
-                        if (xmlResponse.code() == 200 && xmlBody != null) {
-                            response.setSuccess(true);
-                            response.setXml(xmlBody.string());
-                            parseResponse(device, response);
-                            return;
-                        }
-
-                        String errorMessage = "";
-                        if (xmlBody != null)
-                            errorMessage = xmlBody.string();
-
-                        if (request.getListener() != null)
-                            request.getListener().onError(new OnvifRequest.OnvifException(device, xmlResponse.code(), errorMessage));
-                        if (onvifResponseListener != null)
-                            onvifResponseListener.onError(new OnvifRequest.OnvifException(device, xmlResponse.code(), errorMessage));
+                        handleResponse(device, request, xmlResponse);
                     }
 
                     @Override
                     public void onFailure(Call call, IOException e) {
-                        if (request.getListener() != null)
-                            request.getListener().onError(new OnvifRequest.OnvifException(device, -1, e.getMessage()));
-                        if (onvifResponseListener != null)
-                            onvifResponseListener.onError(new OnvifRequest.OnvifException(device, -1, e.getMessage()));
+                        handleFailure(device, request, e);
                     }
                 });
+    }
+
+    private void handleResponse(OnvifDevice device, OnvifRequest<?> request, Response xmlResponse) throws IOException {
+        OnvifResponse<Object> response = new OnvifResponse(request);
+        ResponseBody xmlBody = xmlResponse.body();
+
+        if (xmlBody == null) {
+            notifyError(device, request, xmlResponse.code(), "Empty response body");
+            return;
+        }
+
+        String xmlContent = xmlBody.string();
+
+        // Check for SOAP Fault (even if HTTP status is 200)
+        if (xmlContent.contains(":Fault") || xmlContent.contains("<Fault")) {
+            String reason = extractSoapFaultReason(xmlContent);
+            notifyError(device, request, xmlResponse.code(), reason);
+            return;
+        }
+
+        if (xmlResponse.code() == 200) {
+            response.setSuccess(true);
+            response.setXml(xmlContent);
+            parseResponse(device, response);
+            return;
+        }
+
+        notifyError(device, request, xmlResponse.code(), xmlContent);
+    }
+
+    private void handleFailure(OnvifDevice device, OnvifRequest<?> request, IOException e) {
+        notifyError(device, request, -1, e.getMessage());
+    }
+
+    private void notifyError(OnvifDevice device, OnvifRequest<?> request, int errorCode, String errorMessage) {
+        OnvifRequest.OnvifException exception = new OnvifRequest.OnvifException(device, errorCode, errorMessage);
+        if (request.getListener() != null) {
+            request.getListener().onError(exception);
+        }
+        if (onvifResponseListener != null) {
+            onvifResponseListener.onError(exception);
+        }
     }
 
     private void parseResponse(OnvifDevice device, OnvifResponse<Object> response) {
@@ -192,18 +213,35 @@ public class OnvifExecutor {
         return device.getPath().getServicesPath();
     }
 
-    private String bodyToString(Request request) {
-
-        try {
-            Request copy = request.newBuilder().build();
-            Buffer buffer = new Buffer();
-            if (copy.body() != null)
-                copy.body().writeTo(buffer);
-            return buffer.readUtf8();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return "";
+    private String extractSoapFaultReason(String xml) {
+        if (xml == null) {
+            return "Unknown SOAP Fault";
         }
+        int start = xml.indexOf("<faultstring>");
+        if (start != -1) {
+            int end = xml.indexOf("</faultstring>", start);
+            if (end != -1) {
+                return xml.substring(start + 13, end);
+            }
+        }
+        start = xml.indexOf("<soap:Text");
+        if (start != -1) {
+            int tagEnd = xml.indexOf(">", start);
+            if (tagEnd != -1) {
+                int end = xml.indexOf("</soap:Text>", tagEnd);
+                if (end != -1) {
+                    return xml.substring(tagEnd + 1, end);
+                }
+            }
+        }
+        start = xml.indexOf("<Reason>");
+        if (start != -1) {
+            int end = xml.indexOf("</Reason>", start);
+            if (end != -1) {
+                return xml.substring(start + 8, end);
+            }
+        }
+        return "SOAP Fault: check device logs or raw response";
     }
 
 }
