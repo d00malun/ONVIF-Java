@@ -142,6 +142,12 @@ public class OnvifExecutor {
             case GET_SNAPSHOT_URI:
                 data = new GetMediaStreamParser().parse(response);
                 break;
+            case PTZ_GET_PRESETS:
+                data = new GetPresetsParser().parse(response);
+                break;
+            case PTZ_SET_PRESET:
+                data = new SetPresetParser().parse(response);
+                break;
             default:
                 onvifResponseListener.onResponse(device, response);
                 break;
@@ -176,6 +182,10 @@ public class OnvifExecutor {
             case PTZ_RELATIVE_MOVE:
             case PTZ_ABSOLUTE_MOVE:
             case PTZ_STOP:
+            case PTZ_GET_PRESETS:
+            case PTZ_SET_PRESET:
+            case PTZ_GOTO_PRESET:
+            case PTZ_REMOVE_PRESET:
                 return device.getPath().getPtzPath();
         }
 
