@@ -44,7 +44,7 @@ public class GetPTZNodesParser extends OnvifParser<List<OnvifPTZNode>> {
                                 homeSupported = Boolean.parseBoolean(text.trim());
                             }
                         }
-                    } else if (tagName != null && tagName.toLowerCase().contains("zoom")) {
+                    } else if (tagName != null && tagName.toLowerCase().contains("continuouszoom")) {
                         if (token != null) {
                             zoomSupported = true;
                         }
