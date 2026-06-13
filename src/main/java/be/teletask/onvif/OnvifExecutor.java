@@ -202,7 +202,34 @@ public class OnvifExecutor {
     }
 
     private String getUrlForRequest(OnvifDevice device, OnvifRequest<?> request) {
-        return device.getHostName() + getPathForRequest(device, request);
+        String base = device.getHostName();
+        String path = getPathForRequest(device, request);
+
+        if (path.startsWith("http://") || path.startsWith("https://")) {
+            return path;
+        }
+
+        try {
+            java.net.URL url = new java.net.URL(base);
+            int port = url.getPort();
+            String portPart = port == -1 ? "" : ":" + port;
+            base = url.getProtocol() + "://" + url.getHost() + portPart;
+        } catch (java.net.MalformedURLException e) {
+            // Fallback: keep original but normalize slashes
+            if (base.endsWith("/") && path.startsWith("/")) {
+                return base + path.substring(1);
+            } else if (!base.endsWith("/") && !path.startsWith("/")) {
+                return base + "/" + path;
+            }
+            return base + path;
+        }
+
+        if (base.endsWith("/") && path.startsWith("/")) {
+            return base + path.substring(1);
+        } else if (!base.endsWith("/") && !path.startsWith("/")) {
+            return base + "/" + path;
+        }
+        return base + path;
     }
 
     private String getPathForRequest(OnvifDevice device, OnvifRequest<?> request) {
