@@ -34,8 +34,8 @@ public class StopRequest implements OnvifRequest<Void> {
     public String getXml() {
         return "<tptz:Stop xmlns:tptz=\"http://www.onvif.org/ver20/ptz/wsdl\" xmlns:tt=\"http://www.onvif.org/ver10/schema\">" +
                 "<tptz:ProfileToken>" + profileToken + "</tptz:ProfileToken>" +
-                "<tptz:PanTilt>" + panTilt + " </tptz:PanTilt>" +
-                "<tptz:Zoom>" + zoom + " </tptz:Zoom>" +
+                "<tptz:PanTilt>" + panTilt + "</tptz:PanTilt>" +
+                "<tptz:Zoom>" + zoom + "</tptz:Zoom>" +
                 "</tptz:Stop>";
     }
 
