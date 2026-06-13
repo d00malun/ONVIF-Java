@@ -21,7 +21,8 @@ public enum OnvifType {
     PTZ_GOTO_PRESET("http://www.onvif.org/ver20/ptz/wsdl"),
     PTZ_REMOVE_PRESET("http://www.onvif.org/ver20/ptz/wsdl"),
     PTZ_GOTO_HOME_POSITION("http://www.onvif.org/ver20/ptz/wsdl"),
-    PTZ_SET_HOME_POSITION("http://www.onvif.org/ver20/ptz/wsdl");
+    PTZ_SET_HOME_POSITION("http://www.onvif.org/ver20/ptz/wsdl"),
+    PTZ_GET_NODES("http://www.onvif.org/ver20/ptz/wsdl");
 
     public final String namespace;
 

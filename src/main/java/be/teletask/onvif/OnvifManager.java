@@ -8,6 +8,7 @@ import be.teletask.onvif.models.OnvifServices;
 import be.teletask.onvif.requests.*;
 import be.teletask.onvif.responses.OnvifResponse;
 import be.teletask.onvif.models.OnvifPreset;
+import be.teletask.onvif.models.OnvifPTZNode;
 
 import java.util.List;
 
@@ -108,6 +109,11 @@ public class OnvifManager implements OnvifResponseListener {
 
     public void setPTZHomePosition(OnvifDevice device, String profileToken, OnvifRequest.Listener<Void> listener) {
         final SetHomePositionRequest request = new SetHomePositionRequest(profileToken, listener);
+        executor.sendRequest(device, request);
+    }
+
+    public void getPTZNodes(OnvifDevice device, OnvifRequest.Listener<List<OnvifPTZNode>> listener) {
+        final GetPTZNodesRequest request = new GetPTZNodesRequest(listener);
         executor.sendRequest(device, request);
     }
 

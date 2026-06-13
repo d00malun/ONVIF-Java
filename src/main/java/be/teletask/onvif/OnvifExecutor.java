@@ -178,6 +178,9 @@ public class OnvifExecutor {
             case PTZ_SET_PRESET:
                 data = new SetPresetParser().parse(response);
                 break;
+            case PTZ_GET_NODES:
+                data = new GetPTZNodesParser().parse(response);
+                break;
             default:
                 onvifResponseListener.onResponse(device, response);
                 break;
@@ -218,6 +221,7 @@ public class OnvifExecutor {
             case PTZ_REMOVE_PRESET:
             case PTZ_GOTO_HOME_POSITION:
             case PTZ_SET_HOME_POSITION:
+            case PTZ_GET_NODES:
                 return device.getPath().getPtzPath();
         }
 
