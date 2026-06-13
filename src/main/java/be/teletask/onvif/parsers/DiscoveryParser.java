@@ -11,6 +11,7 @@ import be.teletask.onvif.responses.OnvifResponse;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URI;
@@ -85,6 +86,10 @@ public class DiscoveryParser extends OnvifParser<List<Device>> {
     @Override
     public List<Device> parse(OnvifResponse response) {
         List<Device> devices = new ArrayList<>();
+
+        if (new File("onvif-debug-enable.txt").exists()) {
+            System.out.println("Parsing discovery response from " + getHostName() + " with mode " + discoveryMode + " and type " + discoveryType + ":\n" + response.getXml());
+        }
 
         switch (discoveryMode) {
             case ONVIF:

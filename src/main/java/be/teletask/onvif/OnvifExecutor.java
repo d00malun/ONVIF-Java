@@ -15,6 +15,7 @@ import com.burgstaller.okhttp.digest.Credentials;
 import com.burgstaller.okhttp.digest.DigestAuthenticator;
 import okhttp3.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -119,6 +120,9 @@ public class OnvifExecutor {
         }
 
         String xmlContent = xmlBody.string();
+        if (new File("onvif-debug-enable.txt").exists()) {
+            System.out.println("Received response for request " + request.getType() + " from device " + device.getHostName() + ":\n" + xmlContent);
+        }
 
         // Check for SOAP Fault (even if HTTP status is 200)
         if (xmlContent.contains(":Fault") || xmlContent.contains("<Fault")) {
@@ -229,7 +233,6 @@ public class OnvifExecutor {
     }
 
     private String extractSoapFaultReason(String xml) {
-        //System.out.println("Extracting SOAP Fault reason from XML: " + xml);
         if (xml == null) {
             return "Unknown SOAP Fault";
         }
@@ -259,7 +262,6 @@ public class OnvifExecutor {
             return message.trim();
         }
 
-        System.out.println("Could not extract SOAP Fault reason from XML: " + xml);
         return "SOAP Fault: check device logs or raw response";
     }
 
