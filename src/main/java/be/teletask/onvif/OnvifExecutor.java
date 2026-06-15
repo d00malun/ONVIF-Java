@@ -163,6 +163,11 @@ public class OnvifExecutor {
                 device.setPath(path);
                 data = path;
                 break;
+            case GET_CAPABILITIES:
+                OnvifServices capPath = new GetCapabilitiesParser().parse(response);
+                device.setPath(capPath);
+                data = capPath;
+                break;
             case GET_DATE_AND_TIME:
                 data = new GetDateAndTimeParser().parse(response);
                 break;
@@ -235,6 +240,7 @@ public class OnvifExecutor {
     private String getPathForRequest(OnvifDevice device, OnvifRequest<?> request) {
         switch (request.getType()) {
             case GET_SERVICES:
+            case GET_CAPABILITIES:
                 return device.getPath().getServicesPath();
             case GET_DEVICE_INFORMATION:
                 return device.getPath().getDeviceInformationPath();

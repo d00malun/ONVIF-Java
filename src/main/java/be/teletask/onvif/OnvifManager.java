@@ -42,6 +42,11 @@ public class OnvifManager implements OnvifResponseListener {
         executor.sendRequest(device, request);
     }
 
+    public void getCapabilities(OnvifDevice device, OnvifRequest.Listener<OnvifServices> listener) {
+        final GetCapabilitiesRequest request = new GetCapabilitiesRequest(listener);
+        executor.sendRequest(device, request);
+    }
+
     public void getDeviceInformation(OnvifDevice device, OnvifRequest.Listener<OnvifDeviceInformation> listener) {
         final GetDeviceInformationRequest request = new GetDeviceInformationRequest(listener);
         executor.sendRequest(device, request);
