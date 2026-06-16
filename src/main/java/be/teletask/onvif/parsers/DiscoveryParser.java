@@ -8,6 +8,8 @@ import be.teletask.onvif.models.OnvifDevice;
 import be.teletask.onvif.models.UPnPDevice;
 import be.teletask.onvif.responses.OnvifResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -22,6 +24,8 @@ import java.util.*;
  * Copyright (c) 2018 TELETASK BVBA. All rights reserved.
  */
 public class DiscoveryParser extends OnvifParser<List<Device>> {
+
+    private static final Logger log = LoggerFactory.getLogger(DiscoveryParser.class);
 
     //Constants
     public static final String TAG = DiscoveryParser.class.getSimpleName();
@@ -88,7 +92,7 @@ public class DiscoveryParser extends OnvifParser<List<Device>> {
         List<Device> devices = new ArrayList<>();
 
         if (new File("onvif-debug-enable.txt").exists()) {
-            System.out.println("Parsing discovery response from " + getHostName() + " with mode " + discoveryMode + " and type " + discoveryType + ":\n" + response.getXml());
+            log.info("Parsing discovery response from {} with mode {} and type {}:\n{}", getHostName(), discoveryMode, discoveryType, response.getXml());
         }
 
         switch (discoveryMode) {
@@ -176,7 +180,7 @@ public class DiscoveryParser extends OnvifParser<List<Device>> {
                 final String parsedAddress = url.getScheme() + "://" + url.getHost() + (url.getPort() == 0 || url.getPort() == -1 ? "" : ":" + url.getPort()) + url.getPath();
                 device.addAddress(parsedAddress);
             } catch (Exception e){
-                System.err.println("Failed to parse address: " + address);
+                log.error("Failed to parse address: {}", address, e);
             }
         }
     }

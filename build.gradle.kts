@@ -19,6 +19,7 @@ dependencies {
     implementation("com.squareup.okhttp3", "okhttp", "4.12.0")
     implementation("io.github.rburgst", "okhttp-digest", "3.1.0")
     implementation("org.jetbrains.kotlinx", "kotlinx-coroutines-core", "1.8.1")
+    implementation("org.slf4j", "slf4j-api", "2.0.16")
 }
 
 val sourcesJar by tasks.creating(Jar::class) {

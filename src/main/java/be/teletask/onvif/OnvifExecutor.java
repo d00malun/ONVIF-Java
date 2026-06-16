@@ -15,6 +15,9 @@ import com.burgstaller.okhttp.digest.Credentials;
 import com.burgstaller.okhttp.digest.DigestAuthenticator;
 import okhttp3.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
@@ -28,6 +31,8 @@ import java.util.concurrent.TimeUnit;
  * Copyright (c) 2018 TELETASK BVBA. All rights reserved.
  */
 public class OnvifExecutor {
+
+    private static final Logger log = LoggerFactory.getLogger(OnvifExecutor.class);
 
     //Constants
     public static final String TAG = OnvifExecutor.class.getSimpleName();
@@ -123,7 +128,7 @@ public class OnvifExecutor {
 
         String xmlContent = xmlBody.string();
         if (new File("onvif-debug-enable.txt").exists()) {
-            System.out.println("Received response for request " + request.getType() + " from device " + device.getHostName() + ":\n" + xmlContent);
+            log.info("Received response for request {} from device {}:\n{}", request.getType(), device.getHostName(), xmlContent);
         }
 
         // Check for SOAP Fault (even if HTTP status is 200)
