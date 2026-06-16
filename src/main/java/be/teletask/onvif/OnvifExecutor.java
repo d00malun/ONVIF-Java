@@ -294,6 +294,21 @@ public class OnvifExecutor {
         }
 
         // Try to find <Value> or subcodes as fallback if reason/text is empty
+        String values = extractSoapFaultValues(xml);
+        if (values != null) {
+            return values;
+        }
+
+        // Try to find <message> as fallback
+        String message = extractTagContent(xml, "message");
+        if (message != null && !message.trim().isEmpty()) {
+            return message.trim();
+        }
+
+        return "SOAP Fault: check device logs or raw response";
+    }
+
+    private String extractSoapFaultValues(String xml) {
         try {
             java.util.regex.Pattern pattern = java.util.regex.Pattern.compile(
                     "<[\\w:\\-]*Value[^>]*>(.*?)</[\\w:\\-]*Value>",
@@ -313,14 +328,7 @@ public class OnvifExecutor {
         } catch (Exception e) {
             // Ignore
         }
-
-        // Try to find <message> as fallback
-        String message = extractTagContent(xml, "message");
-        if (message != null && !message.trim().isEmpty()) {
-            return message.trim();
-        }
-
-        return "SOAP Fault: check device logs or raw response";
+        return null;
     }
 
     private String extractTagContent(String xml, String tagName) {
