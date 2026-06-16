@@ -18,6 +18,8 @@ import okhttp3.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -284,9 +286,32 @@ public class OnvifExecutor {
 
         // Try to find <Reason> as fallback
         String reason = extractTagContent(xml, "Reason");
-        if (reason != null && !reason.trim().isEmpty()) {
-            // Strip any nested XML tags if present
-            return reason.replaceAll("<[^>]*>", "").trim();
+        if (reason != null) {
+            String stripped = reason.replaceAll("<[^>]*>", "").trim();
+            if (!stripped.isEmpty()) {
+                return stripped;
+            }
+        }
+
+        // Try to find <Value> or subcodes as fallback if reason/text is empty
+        try {
+            java.util.regex.Pattern pattern = java.util.regex.Pattern.compile(
+                    "<[\\w:\\-]*Value[^>]*>(.*?)</[\\w:\\-]*Value>",
+                    java.util.regex.Pattern.CASE_INSENSITIVE
+            );
+            java.util.regex.Matcher matcher = pattern.matcher(xml);
+            List<String> values = new ArrayList<>();
+            while (matcher.find()) {
+                String val = matcher.group(1).trim();
+                if (!val.isEmpty() && !val.contains("Receiver") && !val.contains("Sender")) {
+                    values.add(val);
+                }
+            }
+            if (!values.isEmpty()) {
+                return "SOAP Fault: " + String.join(", ", values);
+            }
+        } catch (Exception e) {
+            // Ignore
         }
 
         // Try to find <message> as fallback
