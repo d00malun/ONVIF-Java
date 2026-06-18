@@ -102,6 +102,10 @@ public class OnvifExecutor {
     private void performXmlRequest(OnvifDevice device, OnvifRequest<?> request, Request xmlRequest) {
         if (xmlRequest == null) return;
 
+        if (new File("onvif-debug-enable.txt").exists() && log.isInfoEnabled()) {
+            log.info("Sending request {} to device {}:\n{}", request.getType(), device.getHostName(), sanitizeXml(request.getXml()));
+        }
+
         client.newCall(xmlRequest)
                 .enqueue(new Callback() {
 
@@ -127,7 +131,7 @@ public class OnvifExecutor {
         }
 
         String xmlContent = xmlBody.string();
-        if (new File("onvif-debug-enable.txt").exists()) {
+        if (new File("onvif-debug-enable.txt").exists() && log.isInfoEnabled()) {
             log.info("Received response for request {} from device {}:\n{}", request.getType(), device.getHostName(), sanitizeXml(xmlContent));
         }
 
