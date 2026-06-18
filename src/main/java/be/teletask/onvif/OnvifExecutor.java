@@ -128,7 +128,7 @@ public class OnvifExecutor {
 
         String xmlContent = xmlBody.string();
         if (new File("onvif-debug-enable.txt").exists()) {
-            log.info("Received response for request {} from device {}:\n{}", request.getType(), device.getHostName(), xmlContent);
+            log.info("Received response for request {} from device {}:\n{}", request.getType(), device.getHostName(), sanitizeXml(xmlContent));
         }
 
         // Check for SOAP Fault (even if HTTP status is 200)
@@ -350,6 +350,16 @@ public class OnvifExecutor {
             // Ignore regex exceptions
         }
         return null;
+    }
+
+    private String sanitizeXml(String xml) {
+        if (xml == null) {
+            return null;
+        }
+        String sanitized = xml;
+        sanitized = sanitized.replaceAll("(<(?:[\\w\\-]*:)?Password\\b[^>]*>)([^<]*)(</(?:[\\w\\-]*:)?Password>)", "$1***$3");
+        sanitized = sanitized.replaceAll("(<(?:[\\w\\-]*:)?Nonce\\b[^>]*>)([^<]*)(</(?:[\\w\\-]*:)?Nonce>)", "$1***$3");
+        return sanitized;
     }
 
 }
