@@ -20,6 +20,9 @@ public class GetPresetsParser extends OnvifParser<List<OnvifPreset>> {
             eventType = getXpp().getEventType();
             String token = null;
             String name = null;
+            Double x = null;
+            Double y = null;
+            Double zoom = null;
 
             while (eventType != XmlPullParser.END_DOCUMENT) {
                 if (eventType == XmlPullParser.START_TAG) {
@@ -29,15 +32,23 @@ public class GetPresetsParser extends OnvifParser<List<OnvifPreset>> {
                     } else if ("Name".equalsIgnoreCase(tagName)) {
                         getXpp().next();
                         name = getXpp().getText();
+                    } else if ("PanTilt".equalsIgnoreCase(tagName)) {
+                        x = parseDouble(getXpp().getAttributeValue(null, "x"));
+                        y = parseDouble(getXpp().getAttributeValue(null, "y"));
+                    } else if ("Zoom".equalsIgnoreCase(tagName)) {
+                        zoom = parseDouble(getXpp().getAttributeValue(null, "x"));
                     }
                 } else if (eventType == XmlPullParser.END_TAG) {
                     String tagName = getXpp().getName();
                     if ("Preset".equalsIgnoreCase(tagName)) {
                         if (token != null && name != null) {
-                            presets.add(new OnvifPreset(token, name));
+                            presets.add(new OnvifPreset(token, name, x, y, zoom));
                         }
                         token = null;
                         name = null;
+                        x = null;
+                        y = null;
+                        zoom = null;
                     }
                 }
                 eventType = getXpp().next();
@@ -47,5 +58,14 @@ public class GetPresetsParser extends OnvifParser<List<OnvifPreset>> {
         }
 
         return presets;
+    }
+
+    private Double parseDouble(String str) {
+        if (str == null) return null;
+        try {
+            return Double.parseDouble(str);
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 }
