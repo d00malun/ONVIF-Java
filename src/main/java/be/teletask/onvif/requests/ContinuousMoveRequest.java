@@ -36,15 +36,28 @@ public class ContinuousMoveRequest implements OnvifRequest<Void> {
 
     @Override
     public String getXml() {
-        return "<tptz:ContinuousMove xmlns:tptz=\"http://www.onvif.org/ver20/ptz/wsdl\" xmlns:tt=\"http://www.onvif.org/ver10/schema\">" +
-                "<tptz:ProfileToken>" + profileToken + "</tptz:ProfileToken>" +
-                "<tptz:Velocity><tt:PanTilt x=\"" + velocityX + "\" y=\"" + velocityY + "\"></tt:PanTilt></tptz:Velocity>" +
-                (timeout != null ? "<tptz:Timeout>PT" + timeout + "S</tptz:Timeout>" : "") +
-                "</tptz:ContinuousMove>";
+        StringBuilder sb = new StringBuilder();
+        sb.append("<tptz:ContinuousMove xmlns:tptz=\"http://www.onvif.org/ver20/ptz/wsdl\" xmlns:tt=\"http://www.onvif.org/ver10/schema\">");
+        sb.append("<tptz:ProfileToken>").append(profileToken).append("</tptz:ProfileToken>");
+        sb.append("<tptz:Velocity>");
+        if ((velocityX != null && Math.abs(velocityX) > 0.0001) || (velocityY != null && Math.abs(velocityY) > 0.0001)) {
+            double x = velocityX != null ? velocityX : 0.0;
+            double y = velocityY != null ? velocityY : 0.0;
+            sb.append("<tt:PanTilt x=\"").append(x).append("\" y=\"").append(y).append("\"></tt:PanTilt>");
+        }
+        if (velocityZ != null && Math.abs(velocityZ) > 0.0001) {
+            sb.append("<tt:Zoom x=\"").append(velocityZ).append("\"></tt:Zoom>");
+        }
+        sb.append("</tptz:Velocity>");
+        if (timeout != null) {
+            sb.append("<tptz:Timeout>PT").append(timeout).append("S</tptz:Timeout>");
+        }
+        sb.append("</tptz:ContinuousMove>");
+        return sb.toString();
     }
 
     @Override
     public OnvifType getType() {
-        return OnvifType.CONTINUOUS_MOVE;
+        return OnvifType.PTZ_CONTINUOUS_MOVE;
     }
 }

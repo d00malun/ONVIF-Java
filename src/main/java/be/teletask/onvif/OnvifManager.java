@@ -7,6 +7,8 @@ import be.teletask.onvif.models.OnvifMediaProfile;
 import be.teletask.onvif.models.OnvifServices;
 import be.teletask.onvif.requests.*;
 import be.teletask.onvif.responses.OnvifResponse;
+import be.teletask.onvif.models.OnvifPreset;
+import be.teletask.onvif.models.OnvifPTZNode;
 
 import java.util.List;
 
@@ -37,6 +39,11 @@ public class OnvifManager implements OnvifResponseListener {
     //Methods
     public void getServices(OnvifDevice device, OnvifRequest.Listener<OnvifServices> listener) {
         final GetServicesRequest request = new GetServicesRequest(listener);
+        executor.sendRequest(device, request);
+    }
+
+    public void getCapabilities(OnvifDevice device, OnvifRequest.Listener<OnvifServices> listener) {
+        final GetCapabilitiesRequest request = new GetCapabilitiesRequest(listener);
         executor.sendRequest(device, request);
     }
 
@@ -77,6 +84,41 @@ public class OnvifManager implements OnvifResponseListener {
 
     public void ptzStop(OnvifDevice device, String profileToken, boolean panTilt, boolean zoom, OnvifRequest.Listener<Void> listener) {
         final StopRequest request = new StopRequest(profileToken, panTilt, zoom, listener);
+        executor.sendRequest(device, request);
+    }
+
+    public void getPTZPresets(OnvifDevice device, String profileToken, OnvifRequest.Listener<List<OnvifPreset>> listener) {
+        final GetPresetsRequest request = new GetPresetsRequest(profileToken, listener);
+        executor.sendRequest(device, request);
+    }
+
+    public void setPTZPreset(OnvifDevice device, String profileToken, String presetName, String presetToken, OnvifRequest.Listener<String> listener) {
+        final SetPresetRequest request = new SetPresetRequest(profileToken, presetName, presetToken, listener);
+        executor.sendRequest(device, request);
+    }
+
+    public void gotoPTZPreset(OnvifDevice device, String profileToken, String presetToken, OnvifRequest.Listener<Void> listener) {
+        final GotoPresetRequest request = new GotoPresetRequest(profileToken, presetToken, listener);
+        executor.sendRequest(device, request);
+    }
+
+    public void removePTZPreset(OnvifDevice device, String profileToken, String presetToken, OnvifRequest.Listener<Void> listener) {
+        final RemovePresetRequest request = new RemovePresetRequest(profileToken, presetToken, listener);
+        executor.sendRequest(device, request);
+    }
+
+    public void gotoPTZHomePosition(OnvifDevice device, String profileToken, OnvifRequest.Listener<Void> listener) {
+        final GotoHomePositionRequest request = new GotoHomePositionRequest(profileToken, listener);
+        executor.sendRequest(device, request);
+    }
+
+    public void setPTZHomePosition(OnvifDevice device, String profileToken, OnvifRequest.Listener<Void> listener) {
+        final SetHomePositionRequest request = new SetHomePositionRequest(profileToken, listener);
+        executor.sendRequest(device, request);
+    }
+
+    public void getPTZNodes(OnvifDevice device, OnvifRequest.Listener<List<OnvifPTZNode>> listener) {
+        final GetPTZNodesRequest request = new GetPTZNodesRequest(listener);
         executor.sendRequest(device, request);
     }
 

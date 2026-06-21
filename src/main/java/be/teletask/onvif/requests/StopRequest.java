@@ -32,11 +32,17 @@ public class StopRequest implements OnvifRequest<Void> {
 
     @Override
     public String getXml() {
-        return "<tptz:Stop xmlns:tptz=\"http://www.onvif.org/ver20/ptz/wsdl\" xmlns:tt=\"http://www.onvif.org/ver10/schema\">" +
-                "<tptz:ProfileToken>" + profileToken + "</tptz:ProfileToken>" +
-                "<tptz:PanTilt>" + panTilt + " </tptz:PanTilt>" +
-                "<tptz:Zoom>" + zoom + " </tptz:Zoom>" +
-                "</tptz:Stop>";
+        StringBuilder sb = new StringBuilder();
+        sb.append("<tptz:Stop xmlns:tptz=\"http://www.onvif.org/ver20/ptz/wsdl\" xmlns:tt=\"http://www.onvif.org/ver10/schema\">");
+        sb.append("<tptz:ProfileToken>").append(profileToken).append("</tptz:ProfileToken>");
+        if (panTilt) {
+            sb.append("<tptz:PanTilt>true</tptz:PanTilt>");
+        }
+        if (zoom) {
+            sb.append("<tptz:Zoom>true</tptz:Zoom>");
+        }
+        sb.append("</tptz:Stop>");
+        return sb.toString();
     }
 
     @Override

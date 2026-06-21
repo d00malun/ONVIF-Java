@@ -42,7 +42,7 @@ public class RelativeMoveRequest implements OnvifRequest<Void> {
 
     @Override
     public OnvifType getType() {
-        return OnvifType.RELATIVE_MOVE;
+        return OnvifType.PTZ_RELATIVE_MOVE;
     }
 
 }

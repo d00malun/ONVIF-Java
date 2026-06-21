@@ -7,15 +7,23 @@ package be.teletask.onvif.models;
 public enum OnvifType {
     CUSTOM(""),
     GET_SERVICES("http://www.onvif.org/ver10/device/wsdl"),
+    GET_CAPABILITIES("http://www.onvif.org/ver10/device/wsdl"),
     GET_DATE_AND_TIME("http://www.onvif.org/ver10/device/wsdl"),
     GET_DEVICE_INFORMATION("http://www.onvif.org/ver10/device/wsdl"),
     GET_MEDIA_PROFILES("http://www.onvif.org/ver10/media/wsdl"),
     GET_STREAM_URI("http://www.onvif.org/ver10/media/wsdl"),
     GET_SNAPSHOT_URI("http://www.onvif.org/ver10/media/wsdl"),
-    CONTINUOUS_MOVE("http://www.onvif.org/ver10/media/wsdl"),
-    ABSOLUTE_MOVE("http://www.onvif.org/ver10/media/wsdl"),
-    PTZ_STOP("http://www.onvif.org/ver10/media/wsdl"),
-    RELATIVE_MOVE("http://www.onvif.org/ver10/media/wsdl");
+    PTZ_CONTINUOUS_MOVE("http://www.onvif.org/ver20/ptz/wsdl"),
+    PTZ_ABSOLUTE_MOVE("http://www.onvif.org/ver20/ptz/wsdl"),
+    PTZ_STOP("http://www.onvif.org/ver20/ptz/wsdl"),
+    PTZ_RELATIVE_MOVE("http://www.onvif.org/ver20/ptz/wsdl"),
+    PTZ_GET_PRESETS("http://www.onvif.org/ver20/ptz/wsdl"),
+    PTZ_SET_PRESET("http://www.onvif.org/ver20/ptz/wsdl"),
+    PTZ_GOTO_PRESET("http://www.onvif.org/ver20/ptz/wsdl"),
+    PTZ_REMOVE_PRESET("http://www.onvif.org/ver20/ptz/wsdl"),
+    PTZ_GOTO_HOME_POSITION("http://www.onvif.org/ver20/ptz/wsdl"),
+    PTZ_SET_HOME_POSITION("http://www.onvif.org/ver20/ptz/wsdl"),
+    PTZ_GET_NODES("http://www.onvif.org/ver20/ptz/wsdl");
 
     public final String namespace;
 
