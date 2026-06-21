@@ -11,7 +11,7 @@ repositories {
 }
 
 group = "be.teletask.onvif"
-version = "ptz-SNAPSHOT"
+version = "1.1.18"
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
